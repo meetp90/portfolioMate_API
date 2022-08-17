@@ -175,3 +175,28 @@ exports.createStakeHolder = functions.https.onRequest((request, response) => {
                 });
               });
       });
+
+      exports.getEngagementByType = functions.https
+      .onRequest((request, response) => {
+          response.set("Access-Control-Allow-Origin", "*");
+          response.set("Access-Control-Allow-Headers", "Content-Type");
+          const stakeHolder = request.body;
+          admin
+              .firestore()
+              .collection("Engagement")
+              .where("type","==",stakeHolder.type)
+              .get()
+              .then((querySnapshot) => {
+                const orders = [];
+                querySnapshot.forEach((doc) => {
+                  const order = doc.data();
+                  orders.push(order);
+                });
+                response.json(orders);
+              })
+              .catch((error) => {
+                response.status(500).json({
+                  error: error.code,
+                });
+              });
+      });

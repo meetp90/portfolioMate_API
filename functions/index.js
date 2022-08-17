@@ -127,15 +127,14 @@ exports.createStakeHolder = functions.https.onRequest((request, response) => {
 
       exports.getEngagementByStakeHolders = functions.https
       .onRequest((request, response) => {
-        cors(response, request, () => {
           response.set("Access-Control-Allow-Origin", "*");
           response.set("Access-Control-Allow-Headers", "Content-Type");
           const stakeHolder = request.body;
           admin
               .firestore()
               .collection("Engagement")
-              .where(stakeHolderFrom,"==",stakeHolder.stakeHolderFrom)
-              .where(stakeHolderFor,"==",stakeHolder.stakeHolderFor)
+              .where("stakeHolderFrom","==",stakeHolder.stakeHolderFrom)
+              .where("stakeHolderFor","==",stakeHolder.stakeHolderFor)
               .get()
               .then((querySnapshot) => {
                 const orders = [];
@@ -150,6 +149,29 @@ exports.createStakeHolder = functions.https.onRequest((request, response) => {
                   error: error.code,
                 });
               });
-        });
       });
 
+      exports.getEngagementById = functions.https
+      .onRequest((request, response) => {
+          response.set("Access-Control-Allow-Origin", "*");
+          response.set("Access-Control-Allow-Headers", "Content-Type");
+          const stakeHolder = request.body;
+          admin
+              .firestore()
+              .collection("Engagement")
+              .where("id","==",stakeHolder.id)
+              .get()
+              .then((querySnapshot) => {
+                const orders = [];
+                querySnapshot.forEach((doc) => {
+                  const order = doc.data();
+                  orders.push(order);
+                });
+                response.json(orders);
+              })
+              .catch((error) => {
+                response.status(500).json({
+                  error: error.code,
+                });
+              });
+      });

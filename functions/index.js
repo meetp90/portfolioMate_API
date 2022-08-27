@@ -430,9 +430,9 @@ exports.uploadFile = functions.https.onRequest((req, res) => {
     }
     const bb = Busboy({ headers: req.headers });
     let uploadData = null;
-
+    var url = ''
     bb.on("file", (fieldname, file, filename, encoding, mimetype) => {
-      var url = `https://firebasestorage.googleapis.com/v0/b/portfoliomate-e14a8.appspot.com/o/${filename.filename}?alt=media`
+      url = "https://firebasestorage.googleapis.com/v0/b/portfoliomate-e14a8.appspot.com/o/"+filename.filename+"?alt=media"
       console.log(url);
       const filepath = path.join(os.tmpdir(), filename.filename);
       uploadData = { file: filepath, type: mimetype };
@@ -452,7 +452,7 @@ exports.uploadFile = functions.https.onRequest((req, res) => {
         })
         .then(() => {
           res.status(200).json({
-            message: "It worked!"
+            image : url
           });
         })
         .catch(err => {

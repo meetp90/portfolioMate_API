@@ -348,3 +348,66 @@ exports.createStakeHolder = functions.https.onRequest((request, response) => {
               });
         }
       });
+
+      //Task
+      exports.createTask = functions.https.onRequest((request, response) => {
+        response.set("Access-Control-Allow-Origin", "*");
+        response.set("Access-Control-Allow-Headers", "Content-Type");
+        const package = request.body;
+        admin
+            .firestore()
+            .collection("Task")
+            .doc(package.id).set(package)
+            .then( () => {
+              response.json(package);
+            })
+            .catch((error) => {
+              response.status(500).json({
+                error: error.code,
+              });
+            });
+        });
+        exports.updateTask = functions.https.onRequest((request, response) => {
+          response.set("Access-Control-Allow-Origin", "*");
+          response.set("Access-Control-Allow-Headers", "Content-Type");
+          const package = request.body;
+          admin
+              .firestore()
+              .collection("Task")
+              .doc(package.id).update(package)
+              .then( () => {
+                response.json(package);
+              })
+              .catch((error) => {
+                response.status(500).json({
+                  error: error.code,
+                });
+              });
+        });
+
+        exports.getTask = functions.https
+        .onRequest((request, response) => {
+          cors(response, request, () => {
+            response.set("Access-Control-Allow-Origin", "*");
+            response.set("Access-Control-Allow-Headers", "Content-Type");
+            admin
+                .firestore()
+                .collection("Task")
+                .get()
+                .then((querySnapshot) => {
+                  const orders = [];
+                  querySnapshot.forEach((doc) => {
+                    const order = doc.data();
+                    orders.push(order);
+                  });
+                  response.json(orders);
+                })
+                .catch((error) => {
+                  response.status(500).json({
+                    error: error.code,
+                  });
+                });
+          });
+        });
+      
+        
